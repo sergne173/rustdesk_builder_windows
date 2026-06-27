@@ -19,10 +19,11 @@ jobs:
         uses: dtolnay/rust-toolchain@stable
 
       - name: Clone original RustDesk
+        shell: powershell
         run: |
           git clone --depth 1 https://github.com rustdesk-source
-          cp build_custom.ps1 rustdesk-source/build_custom.ps1
-          cp icon.ico rustdesk-source/icon.ico
+          Copy-Item -Path "${{ github.workspace }}\build_custom.ps1" -Destination "${{ github.workspace }}\rustdesk-source\build_custom.ps1" -Force
+          Copy-Item -Path "${{ github.workspace }}\icon.ico" -Destination "${{ github.workspace }}\rustdesk-source\icon.ico" -Force
 
       - name: Run Build Script
         working-directory: ./rustdesk-source
@@ -38,3 +39,4 @@ jobs:
         with:
           name: branded-rustdesk-windows
           path: rustdesk-source/target/release/*.exe
+
