@@ -1,7 +1,7 @@
 name: Build Branded RustDesk Client
 
 on:
-  workflow_dispatch: # Кнопка ручного запуска
+  workflow_dispatch:
 
 jobs:
   build-windows:
