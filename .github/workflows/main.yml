@@ -1,0 +1,40 @@
+name: Build Branded RustDesk Client
+
+on:
+  workflow_dispatch: # Кнопка ручного запуска
+
+jobs:
+  build-windows:
+    runs-on: windows-2022
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Set up Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Clone original RustDesk
+        run: |
+          git clone --depth 1 https://github.com rustdesk-source
+          cp build_custom.ps1 rustdesk-source/build_custom.ps1
+          cp icon.ico rustdesk-source/icon.ico
+
+      - name: Run Build Script
+        working-directory: ./rustdesk-source
+        env:
+          RENDEZVOUS_SERVER: ${{ secrets.ID_SERVER }}
+          RS_PUB_KEY: ${{ secrets.SERVER_KEY }}
+        shell: powershell
+        run: |
+          ./build_custom.ps1 -flutter -portable
+
+      - name: Upload Finished Client
+        uses: actions/upload-artifact@v4
+        with:
+          name: branded-rustdesk-windows
+          path: rustdesk-source/target/release/*.exe
