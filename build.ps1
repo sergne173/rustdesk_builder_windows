@@ -3,6 +3,22 @@ $ErrorActionPreference = "Stop"
 $ProgressPreference = "SilentlyContinue"
 [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
 
+# --- БЛОК ПОДМЕНЫ ИКОНКИ ---
+try {
+    Write-Host "Заменяю оригинальные иконки RustDesk на вашу кастомную..." -ForegroundColor Green
+    
+    # Скрипт обычно запускается в папке репозитория RustDesk, проверим структуру и скопируем
+    if (Test-Path "res") {
+        Copy-Item -Path "$PSScriptRoot\icon.ico" -Destination "res\icon.ico" -Force -ErrorAction SilentlyContinue
+    }
+    if (Test-Path "flutter\windows\runner\resources") {
+        Copy-Item -Path "$PSScriptRoot\icon.ico" -Destination "flutter\windows\runner\resources\app_icon.ico" -Force -ErrorAction SilentlyContinue
+    }
+} catch {
+    Write-Host "Не удалось заменить иконку автоматически, продолжаем сборку..." -ForegroundColor Yellow
+}
+# ---------------------------
+
 # Environment variables for build
 $env:LIBCLANG_PATH = "C:\Program Files\LLVM\bin"
 $env:VCPKG_ROOT = "C:\vcpkg"
@@ -68,3 +84,4 @@ try {
     Write-Warning $_.Exception.Message
     exit 1
 }
+
